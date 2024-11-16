@@ -31,7 +31,8 @@ async function insertTask(task) {
     return new Promise((resolve, reject) => {
         db.run('INSERT INTO tasks (task) VALUES (?)', [task], (err) => {
             if (err) return reject(err);
-            resolve();
+            console.log(`task is: ${task} and task ID: ${this.lastId}`)
+            resolve(this.lastId);
         });
     });
 }

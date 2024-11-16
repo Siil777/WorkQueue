@@ -6,14 +6,14 @@ const Entries = ({ task }) => {
 
 
     useEffect(() => {
-        const postTask = async () => {
+        const postTask = async (newTask) => {
             try {
                 const response = fetch('http://localhost:5000/post/task', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ task })
+                    body: JSON.stringify({ task: newTask })
                 })
                 if(response.status===409) {
                     alert('Task already exist!');
@@ -37,14 +37,7 @@ const Entries = ({ task }) => {
 
     return(
         <div>
-            {error && <div>Error: {error.message}</div>}
-            {responseData ? (
-                <div>
-                    <p>{JSON.stringify(responseData)}</p>
-                </div>
-                 ):(
-                    <p>Loadin..</p>
-            )}
+            
         </div>
     )
 }
