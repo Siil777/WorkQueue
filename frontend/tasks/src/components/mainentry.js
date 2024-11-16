@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
-
+import Forms from './forms.js';
 const Entries = ({ task }) => {
     const [responseData, setresponseData] = useState(null);
     const [error, setError] = useState(null);
 
 
-    useEffect(() => {
         const postTask = async (newTask) => {
             try {
-                const response = fetch('http://localhost:5000/post/task', {
+                const response = await fetch('http://localhost:5000/post/task', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -33,11 +32,10 @@ const Entries = ({ task }) => {
         if(task){
             postTask();
         }
-    }, [task])
 
     return(
         <div>
-            
+            <Forms onTask={postTask} />
         </div>
     )
 }

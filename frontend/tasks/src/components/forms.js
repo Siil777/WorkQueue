@@ -11,17 +11,18 @@ const Forms = ({ onTask }) => {
     }
     return (
         <div>
-            <form onClick={handleInput}>
+            <form className="d-grid justify-content-center">
                 <div>
                 <label htmlFor="input">Enter task</label>
                 </div>
                 <div>
                 <input id="input" placeholder="enter"
-                onClick={(e)=>setInputs(e.target.value)}
+                onChange={(e)=>setInputs(e.target.value)}
+                value={inputs}
                 />
                 </div>
                 <div>
-                <button className="btn btn-outline-primary">Click</button>
+                <button onClick={handleInput} className="btn btn-outline-primary mt-3">Click</button>
                 </div>
             </form>
         </div>

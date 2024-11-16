@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const { getTask, insertTask } = require('./app/db');
+const { getTask, insertTask, getAll } = require('./app/db');
 const port = 5000;
 
 const app = express();
@@ -42,4 +42,12 @@ app.post('/post/task', async (req, res) => {
     }
 });
 
-app.listen(port, () => console.log(`App is running at port ${port}`));
+app.listen(port, async () => {
+    console.log(`App is running at port ${port}`)
+    try{
+        const allTasks = await getAll();
+        console.log(allTasks);
+    }catch(e){
+        console.error(e)
+    }
+});

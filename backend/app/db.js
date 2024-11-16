@@ -1,3 +1,5 @@
+const { resolve } = require('path');
+
 const sqlite3 = require('sqlite3').verbose();
 
 const db = new sqlite3.Database('tasks.db', (err) => {
@@ -31,10 +33,20 @@ async function insertTask(task) {
     return new Promise((resolve, reject) => {
         db.run('INSERT INTO tasks (task) VALUES (?)', [task], (err) => {
             if (err) return reject(err);
-            console.log(`task is: ${task} and task ID: ${this.lastId}`)
-            resolve(this.lastId);
+            console.log(`task is: ${task} and task ID: ${this.lastID}`)
+            resolve(this.lastID);
         });
     });
 }
 
-module.exports = { getTask, insertTask };
+async function getAll(task) {
+    return new Promise((resolve,reject)=>{
+        db.all('SELECT * FROM tasks', (err,rows)=>{
+            if (err) return reject(err);
+            resolve(rows);
+        });
+    });
+    
+}
+
+module.exports = { getTask, insertTask, getAll };
