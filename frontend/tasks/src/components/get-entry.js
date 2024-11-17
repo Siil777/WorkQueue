@@ -42,7 +42,7 @@ const GetTasks = () => {
 
     return (
         <div>
-            {error && <p>Error: {error} </p>}
+  {/*           {error && <p>Error: {error} </p>}
             {tasks.length > 0 ? (
                 <ul>
                     {tasks.map((task, index) => (
@@ -53,7 +53,7 @@ const GetTasks = () => {
                 </ul>
             ) : (
                 <p>Loading tasks...</p>
-            )}
+            )} */}
 
         </div>
     )

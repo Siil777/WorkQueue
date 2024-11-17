@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Forms from './forms-child-post.js';
+import Forms from './drag-co.js';
 import GetTasks from './get-entry.js';
 const Entries = ({ task }) => {
     const [responseData, setresponseData] = useState(null);
@@ -19,6 +19,7 @@ const Entries = ({ task }) => {
                     alert('Task already exist!');
                 }else if(response.status===201){
                     alert('Task has been addded successfully');
+                    window.location.reload();
                 }else if(!response.ok) {
                     const errorData = await response.json();
                     throw new Error('some error occurred', errorData.message);

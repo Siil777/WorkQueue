@@ -1,9 +1,11 @@
 import './App.css';
 import Entries from './components/post-entry.js';
 function App() {
-    return(
-      <Entries/>
-    )
+  return (
+    <div>
+      <Entries />
+    </div>
+  )
 }
 
 export default App;

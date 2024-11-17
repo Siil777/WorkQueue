@@ -49,7 +49,7 @@ async function insertTask(task) {
         db.run('INSERT INTO tasks (task) VALUES (?)', [task], (err) => {
             if (err) return reject(err);
             console.log(`task is: ${task} and task ID: ${this.lastID}`)
-            resolve(this.lastID);
+            resolve({id: this.lastID, task});
         });
     });
 }
