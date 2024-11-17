@@ -30,7 +30,7 @@ async function getTask(task) {
 }
 async function deleteTask(id) {
     return new Promise((resolve, reject) => {
-        db.run('DELETE FROM tasklist WHERE id = ?', [id], function (err) {
+        db.run('DELETE FROM tasks WHERE id = ?', [id], function (err) {
             if (err) {
                 console.error("Database error:", err); 
                 return reject(err);
