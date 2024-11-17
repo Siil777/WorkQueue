@@ -1,5 +1,5 @@
 import './App.css';
-import Entries from './components/mainentry.js';
+import Entries from './components/post-entry.js';
 function App() {
     return(
       <Entries/>

@@ -2,7 +2,7 @@ const { resolve } = require('path');
 
 const sqlite3 = require('sqlite3').verbose();
 
-const db = new sqlite3.Database('tasks.db', (err) => {
+const db = new sqlite3.Database('tasklist.db', (err) => {
     if (err) {
         throw new Error('Database error: ' + err.message);
     } else {
@@ -28,6 +28,21 @@ async function getTask(task) {
         });
     });
 }
+async function deleteTask(id) {
+    return new Promise((resolve, reject) => {
+        db.run('DELETE FROM tasklist WHERE id = ?', [id], function (err) {
+            if (err) {
+                console.error("Database error:", err); 
+                return reject(err);
+            }
+            if (this.changes === 0) {
+                return reject(new Error('Task not found'));
+            }
+            console.log(`Deleted task with ID: ${id}`);
+            resolve(`Deleted task with ID: ${id}`);
+        });
+    });
+}
 
 async function insertTask(task) {
     return new Promise((resolve, reject) => {
@@ -46,7 +61,6 @@ async function getAll(task) {
             resolve(rows);
         });
     });
-    
 }
 
-module.exports = { getTask, insertTask, getAll };
+module.exports = { getTask, insertTask, getAll, deleteTask };

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import Forms from './forms.js';
+import Forms from './forms-child-post.js';
+import GetTasks from './get-entry.js';
 const Entries = ({ task }) => {
     const [responseData, setresponseData] = useState(null);
     const [error, setError] = useState(null);
@@ -36,6 +37,7 @@ const Entries = ({ task }) => {
     return(
         <div>
             <Forms onTask={postTask} />
+            <GetTasks />
         </div>
     )
 }
