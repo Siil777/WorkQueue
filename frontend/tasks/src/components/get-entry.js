@@ -47,7 +47,7 @@ const GetTasks = () => {
                 <ul>
                     {tasks.map((task, index) => (
                         <li key={task.id}>{task.task}
-                            <DeleteMethod taskID={task.id} onTaskDeleted={handleDeleted}></DeleteMethod>
+                            
                         </li>
                     ))}
                 </ul>

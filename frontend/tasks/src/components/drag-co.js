@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import InputWithIcon from './imputs.js';
 import ButtonSecondary from './buttons.js';
-
+import DeleteMethod from './delete-entry.js';
 const TaskManager = ({ onTask }) => {
 
     const [tasks, setTasks] = useState(() => {
@@ -41,6 +41,17 @@ const TaskManager = ({ onTask }) => {
 
     const handleDragOver = (e) => {
         e.preventDefault();
+    };
+
+    const handleDeleted = (deletedTaskID) => {
+        setTasks((prevTask)=>{
+            const updateTask = {...prevTask}
+            for(const area in updateTask){
+                updateTask[area]=updateTask[area].filter(
+                    (task)=>task.id !== deletedTaskID
+                );
+            };
+        });
     };
 
     const findTaskById = (taskId, area) => {
@@ -89,7 +100,7 @@ const TaskManager = ({ onTask }) => {
                     </div>
                 </form>
             </div>
-            <div className="col-md-10 ms-md-5 ps-md-4 flex-md-row" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
+            <div className="col-md-10 ms-md-5 ps-md-5 flex-md-row" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
                 {["do", "inProgress", "done"].map((area) => (
                     <div
                         key={area}
@@ -123,6 +134,7 @@ const TaskManager = ({ onTask }) => {
                                 }}
                             >
                                 {task.text}
+                                <DeleteMethod taskID={task.id} onTaskDeleted={handleDeleted}></DeleteMethod>
                             </div>
                         ))}
                     </div>
