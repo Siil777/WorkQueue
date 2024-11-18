@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import InputWithIcon from './imputs.js';
+import ButtonSecondary from './buttons.js';
 
 const TaskManager = ({ onTask }) => {
 
@@ -11,8 +13,8 @@ const TaskManager = ({ onTask }) => {
         localStorage.setItem("tasks", JSON.stringify(tasks));
     }, [tasks]);
     const addTask = (task) => {
-        onTask(task); 
-        
+        onTask(task);
+
         setTasks((prevTasks) => ({
             ...prevTasks,
             do: [...prevTasks.do, { id: Date.now(), text: task }]
@@ -64,33 +66,30 @@ const TaskManager = ({ onTask }) => {
         e.preventDefault();
         if (input.trim()) {
             addTask(input);
-            setInput(''); 
+            setInput('');
         }
     };
 
     return (
         <div>
             <div>
-                <form className="d-grid justify-content-center" onSubmit={handleAddTask}>
+                <form className="d-grid justify-content-center mt-5" onSubmit={handleAddTask}>
                     <div>
-                        <label htmlFor="taskInput">Enter task</label>
-                    </div>
-                    <div>
-                        <input
+                        <InputWithIcon
                             id="taskInput"
                             placeholder="Enter task"
                             value={input}
-                            onChange={handleInputChange}
+                            onChange={(e) => handleInputChange(e)}
                         />
                     </div>
                     <div className="mb-5">
-                        <button type="submit" className="btn btn-outline-primary mt-3">
+                        <ButtonSecondary type="submit" className="btn btn-outline-primary mt-3">
                             Add Task
-                        </button>
+                        </ButtonSecondary>
                     </div>
                 </form>
             </div>
-            <div style={{ display: "flex", justifyContent: "space-around" }}>
+            <div className="col-md-10 ms-md-5 ps-md-4 flex-md-row" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
                 {["do", "inProgress", "done"].map((area) => (
                     <div
                         key={area}
@@ -98,12 +97,13 @@ const TaskManager = ({ onTask }) => {
                         onDragOver={handleDragOver}
                         onDrop={(e) => handleDrop(e, area)}
                         style={{
-                            width: "30%",
+                            width: "80%",
                             minHeight: "200px",
                             border: "1px solid #ddd",
                             borderRadius: "5px",
                             padding: "10px",
-                            backgroundColor: "#f4f4f4"
+                            backgroundColor: "#f4f4f4",
+                            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
                         }}
                     >
                         <h3>{area === "do" ? "Do" : area === "inProgress" ? "In Progress" : "Done"}</h3>
@@ -115,11 +115,11 @@ const TaskManager = ({ onTask }) => {
                                 onDragStart={(e) => handleDragStart(e, task, area)}
                                 style={{
                                     padding: "10px",
-                                    margin: "5px",
+                                    margin: "5px 0",
                                     background: "#f5f5f5",
                                     border: "1px solid #ddd",
                                     borderRadius: "5px",
-                                    cursor: "grab"
+                                    cursor: "grab",
                                 }}
                             >
                                 {task.text}
@@ -127,8 +127,8 @@ const TaskManager = ({ onTask }) => {
                         ))}
                     </div>
                 ))}
-            </div>
         </div>
+        </div >
     );
 };
 
