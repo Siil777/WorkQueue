@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const { getTask, insertTask, getAll, deleteTask } = require('./app/db');
+const { getTask, insertTask, getAll, deleteTask } = require('./../controller/taskscontroller');
 const port = 5000;
 
 const app = express();
@@ -57,6 +57,7 @@ app.get('/get/task', async (req, res) => {
     }
 });
 app.delete('/delete/task', async (req, res) => {
+    console.log(req.body);
     const { id } = req.body;
     if (!id) {
         return res.status(400).json({ message: 'Task ID is required' });

@@ -51,6 +51,7 @@ const TaskManager = ({ onTask }) => {
                     (task)=>task.id !== deletedTaskID
                 );
             };
+            return updateTask;
         });
     };
 
@@ -134,7 +135,7 @@ const TaskManager = ({ onTask }) => {
                                 }}
                             >
                                 {task.text}
-                                <DeleteMethod taskID={task.id} onTaskDeleted={handleDeleted}></DeleteMethod>
+                                <DeleteMethod></DeleteMethod>
                             </div>
                         ))}
                     </div>

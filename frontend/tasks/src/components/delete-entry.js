@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 
 const DeleteEntry = ({taskID, onTaskDeleted}) => {
+    const [response, setResponse] = useState(null);
     const handleDelete = async () => {
         try {
             const response = await fetch('http://localhost:5000/delete/task', {
@@ -14,9 +15,12 @@ const DeleteEntry = ({taskID, onTaskDeleted}) => {
             if (response.status === 204) {
                 console.log('Task successfully deleted');
                 onTaskDeleted(taskID);
+                return;
             } else if (response.status === 404) {
                 console.log('Task not found');
             }
+            const data = await response.json();
+            setResponse(data);
         } catch (e) {
             console.error(e);
         }

@@ -2,9 +2,9 @@
   "name": "crawllumav",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "services/services.js",
   "scripts": {
-    "start": "nodemon app.js",
+    "start": "nodemon services/services.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.21.0",
+    "nodemon": "^3.1.7",
     "sqlite3": "^5.1.7"
   }
 }
