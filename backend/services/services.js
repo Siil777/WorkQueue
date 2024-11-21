@@ -56,21 +56,24 @@ app.get('/get/task', async (req, res) => {
         res.status(404).json({ message: 'tasks not found' })
     }
 });
-app.delete('/delete/task', async (req, res) => {
-    console.log(req.body);
+app.delete('/delete/task/:id', async (req, res) => {
     const { id } = req.body;
     if (!id) {
         return res.status(400).json({ message: 'Task ID is required' });
     }
     try {
         const message = await deleteTask(id); 
-        res.status(204).send();
+        if(message){
+            res.status(204).send();
+        }
     } catch (err) {
         if (err.message === 'Task not found') {
             res.status(404).json({ message: 'Task not found' });
+            return;
         } else {
             console.error(err); 
             res.status(500).json({ message: 'Internal server error' });
+            return;
         }
     }
 });

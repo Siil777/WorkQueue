@@ -135,7 +135,7 @@ const TaskManager = ({ onTask }) => {
                                 }}
                             >
                                 {task.text}
-                                <DeleteMethod></DeleteMethod>
+                                <DeleteMethod onClick={handleDeleted}></DeleteMethod>
                             </div>
                         ))}
                     </div>

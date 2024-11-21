@@ -11,7 +11,7 @@ const GetTasks = () => {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
-                },
+                }
 
             })
             if (!response.ok) {
@@ -36,9 +36,9 @@ const GetTasks = () => {
         fetchTasks();
     }, []);
 
-    const handleDeleted = (deletedTaskID) => {
-        setTasks(tasks.filter(task => task.id !== deletedTaskID))
-    }
+    // const handleDeleted = (deletedTaskID) => {
+    //     setTasks(tasks.filter(task => task.id !== deletedTaskID))
+    // }
 
     return (
         <div>
