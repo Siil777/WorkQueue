@@ -2,9 +2,9 @@
   "name": "crawllumav",
   "version": "1.0.0",
   "description": "",
-  "main": "services/services.js",
+  "main": "inde.js",
   "scripts": {
-    "start": "nodemon services/services.js",
+    "start": "nodemon index,js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

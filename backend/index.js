@@ -1,12 +1,12 @@
 const express = require('express');
 const path = require('path');
-const { getTask, insertTask, getAll, deleteTask } = require('./../controller/taskscontroller');
+const { getTask, insertTask, getAll, deleteTask } = require('./config/db');
 const port = 5000;
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'app')));
+app.use(express.static(path.join(__dirname, 'config')));
 const allowedOrigin = ['http://localhost:3000'];
 
 app.use((req, res, next) => {
@@ -56,14 +56,14 @@ app.get('/get/task', async (req, res) => {
         res.status(404).json({ message: 'tasks not found' })
     }
 });
-app.delete('/delete/task/:id', async (req, res) => {
-    const { id } = req.body;
-    if (!id) {
-        return res.status(400).json({ message: 'Task ID is required' });
-    }
+app.delete('/delete/task/:taskId', async (req, res) => {
+    const { taskId } = req.params;  // Ensure you are extracting from req.params, not req.body
+    console.log("Received taskId:", taskId);  // Log taskId to debug
+
+    // Continue with deletion logic
     try {
-        const message = await deleteTask(id); 
-        if(message){
+        const message = await deleteTask(taskId);
+        if (message) {
             res.status(204).send();
         }
     } catch (err) {
@@ -77,7 +77,7 @@ app.delete('/delete/task/:id', async (req, res) => {
         }
     }
 });
-
+;
 
 app.listen(port, async () => {
     console.log(`App is running at port ${port}`)

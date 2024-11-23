@@ -28,18 +28,19 @@ async function getTask(task) {
         });
     });
 }
-async function deleteTask(id) {
+async function deleteTask(taskId) {
+    console.log("Attempting to delete task with ID:", taskId);
     return new Promise((resolve, reject) => {
-        db.run('DELETE FROM tasks WHERE id = ?', [id], function (err) {
+        db.run('DELETE FROM tasks WHERE id = ?', [taskId], function (err) {
             if (err) {
-                console.error("Database error:", err); 
+                console.error("Database error:", err);
                 return reject(err);
             }
             if (this.changes === 0) {
                 return reject(new Error('Task not found'));
-            }
-            console.log(`Deleted task with ID: ${id}`);
-            resolve(`Deleted task with ID: ${id}`);
+            } 
+            console.log(`Deleted task with ID: ${taskId}`);
+            resolve(`Deleted task with ID: ${taskId}`);
         });
     });
 }
