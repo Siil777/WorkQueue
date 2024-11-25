@@ -9,12 +9,44 @@ const TaskManager = () => {
         return savedTasks ? JSON.parse(savedTasks) : { do: [], inProgress: [], done: [] };
     });
     const [input, setInput] = useState('');
-    const [responseData, setResponseData] = useState(null);
     const [error, setError] = useState(null);
 
+    // Fetch tasks from the database when the component mounts
+    useEffect(() => {
+        const fetchTasks = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/get/task');
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch tasks: ${response.statusText}`);
+                }
+                const fetchedTasks = await response.json();
+                const combinedTasks = mergeTasks(fetchedTasks, tasks); // Merge with localStorage tasks
+                setTasks(combinedTasks);
+                localStorage.setItem("tasks", JSON.stringify(combinedTasks)); // Update localStorage
+            } catch (e) {
+                setError(e.message);
+                console.error(e);
+            }
+        };
+
+        fetchTasks();
+    }, []);
+
+    // Sync tasks with localStorage whenever they change
     useEffect(() => {
         localStorage.setItem("tasks", JSON.stringify(tasks));
     }, [tasks]);
+
+    const mergeTasks = (dbTasks, localTasks) => {
+        const merged = { ...localTasks };
+        for (const area in dbTasks) {
+            if (dbTasks[area]) {
+                merged[area] = [...dbTasks[area], ...localTasks[area]];
+            }
+        }
+        return merged;
+    };
+
     const postTask = async (newTask) => {
         try {
             const response = await fetch('http://localhost:5000/post/task', {
@@ -24,7 +56,7 @@ const TaskManager = () => {
                 },
                 body: JSON.stringify({ task: newTask }),
             });
-    
+
             if (response.status === 409) {
                 alert('Task already exists!');
             } else if (response.status === 201) {
@@ -32,35 +64,51 @@ const TaskManager = () => {
                 return data.id;
             } else {
                 const errorData = await response.json();
-                throw new Error(`Some error occurred: ${errorData.message}`);
+                throw new Error(`Error: ${errorData.message}`);
             }
         } catch (e) {
-            setError(e);
+            setError(e.message);
             console.error(e);
         }
     };
+
     const getNextId = () => {
         const lastId = parseInt(localStorage.getItem('lastId') || '0', 10);
         const nextId = lastId + 1;
         localStorage.setItem('lastId', nextId);
         return nextId;
     };
-    
+
     const addTask = (task) => {
-        // Generate a persistent unique ID
         const newId = getNextId();
-    
-        // Call the server-side function
-        postTask(task);
-    
-        // Update local state
+        postTask(task); // Save to the database
         setTasks((prevTasks) => ({
             ...prevTasks,
             do: [...prevTasks.do, { id: newId, text: task }],
         }));
     };
-    
-    
+
+    const handleInputChange = (e) => {
+        setInput(e.target.value);
+    };
+
+    const handleAddTask = (e) => {
+        e.preventDefault();
+        if (input.trim()) {
+            addTask(input);
+            setInput('');
+        }
+    };
+
+    const handleDeleted = (deletedTaskID) => {
+        setTasks((prevTasks) => {
+            const updatedTasks = {};
+            for (const area in prevTasks) {
+                updatedTasks[area] = prevTasks[area].filter((task) => task.id !== deletedTaskID);
+            }
+            return updatedTasks;
+        });
+    };
 
     const handleDragStart = (e, task, area) => {
         e.dataTransfer.setData("taskId", task.id);
@@ -84,17 +132,6 @@ const TaskManager = () => {
         e.preventDefault();
     };
 
-    const handleDeleted = (deletedTaskID) => {
-        setTasks((prevTasks) => {
-            const updatedTasks = {};
-            for (const area in prevTasks) {
-                updatedTasks[area] = prevTasks[area].filter((task) => task.id !== deletedTaskID);
-            }
-            return updatedTasks;
-        });
-    };
-
-
     const findTaskById = (taskId, area) => {
         return tasks[area].find((task) => task.id === parseInt(taskId));
     };
@@ -110,39 +147,25 @@ const TaskManager = () => {
         });
     };
 
-    const handleInputChange = (e) => {
-        setInput(e.target.value);
-    };
-
-    const handleAddTask = (e) => {
-        e.preventDefault();
-        if (input.trim()) {
-            addTask(input);
-            setInput('');
-        }
-    };
-
     return (
         <div>
-            <div>
-                <form className="d-grid justify-content-center mt-5" onSubmit={handleAddTask}>
-                    <div>
-                        <InputWithIcon
-                            id="taskInput"
-                            placeholder="Enter task"
-                            value={input}
-                            onChange={(e) => handleInputChange(e)}
-                        />
-                    </div>
-                    <div className="mb-5">
-                        <ButtonSecondary type="submit" className="btn btn-outline-primary mt-3">
-                            Add Task
-                        </ButtonSecondary>
-                    </div>
-                </form>
-            </div>
+            <form className="d-grid justify-content-center mt-5" onSubmit={handleAddTask}>
+                <div>
+                    <InputWithIcon
+                        id="taskInput"
+                        placeholder="Enter task"
+                        value={input}
+                        onChange={handleInputChange}
+                    />
+                </div>
+                <div className="mb-5">
+                    <ButtonSecondary type="submit" className="btn btn-outline-primary mt-3">
+                        Add Task
+                    </ButtonSecondary>
+                </div>
+            </form>
             <div
-                className="col-md-10 ms-md-5 ps-md-5 flex-md-row"
+                className="col-md-11 ms-md-5 ps-md-5 flex-md-row"
                 style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}
             >
                 {["do", "inProgress", "done"].map((area) => (
@@ -160,10 +183,9 @@ const TaskManager = () => {
                             backgroundColor: "#f4f4f4",
                             boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
                         }}
-                    ><h3>{area === "do" ? "Do" : area === "inProgress" ? "In Progress" : "Done"}</h3>
-                    {tasks[area].map((task, index) => {
-                        console.log(index);
-                        return (
+                    >
+                        <h3>{area === "do" ? "Do" : area === "inProgress" ? "In Progress" : "Done"}</h3>
+                        {tasks[area].map((task, index) => (
                             <div
                                 key={index}
                                 className="task"
@@ -179,21 +201,18 @@ const TaskManager = () => {
                                 }}
                             >
                                 {task.text}
-                                <DeleteEntry
-                                    taskId={task.id}
-                                    onTaskDeleted={handleDeleted}
-                                />
+                                <DeleteEntry taskId={task.id} onTaskDeleted={handleDeleted} />
                             </div>
-                        );
-                    })}
-                    
+                        ))}
                     </div>
                 ))}
             </div>
         </div>
     );
 };
+
 export default TaskManager;
+
 
 
 
