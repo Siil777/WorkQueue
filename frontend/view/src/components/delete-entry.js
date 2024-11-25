@@ -10,7 +10,7 @@ const DeleteEntry = ({ taskId, onTaskDeleted }) => {
                 return;
             }
 
-            const response = await fetch(`http://localhost:5000/delete/task/${taskId}`, {
+            const response = await fetch(`https://backend-tau-ecru-85.vercel.app/task/${taskId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

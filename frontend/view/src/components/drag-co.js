@@ -11,18 +11,17 @@ const TaskManager = () => {
     const [input, setInput] = useState('');
     const [error, setError] = useState(null);
 
-    // Fetch tasks from the database when the component mounts
     useEffect(() => {
         const fetchTasks = async () => {
             try {
-                const response = await fetch('http://localhost:5000/get/task');
+                const response = await fetch('https://backend-tau-ecru-85.vercel.app/get/task');
                 if (!response.ok) {
                     throw new Error(`Failed to fetch tasks: ${response.statusText}`);
                 }
                 const fetchedTasks = await response.json();
-                const combinedTasks = mergeTasks(fetchedTasks, tasks); // Merge with localStorage tasks
+                const combinedTasks = mergeTasks(fetchedTasks, tasks); 
                 setTasks(combinedTasks);
-                localStorage.setItem("tasks", JSON.stringify(combinedTasks)); // Update localStorage
+                localStorage.setItem("tasks", JSON.stringify(combinedTasks));
             } catch (e) {
                 setError(e.message);
                 console.error(e);
@@ -32,7 +31,6 @@ const TaskManager = () => {
         fetchTasks();
     }, []);
 
-    // Sync tasks with localStorage whenever they change
     useEffect(() => {
         localStorage.setItem("tasks", JSON.stringify(tasks));
     }, [tasks]);
@@ -49,7 +47,7 @@ const TaskManager = () => {
 
     const postTask = async (newTask) => {
         try {
-            const response = await fetch('http://localhost:5000/post/task', {
+            const response = await fetch('https://backend-tau-ecru-85.vercel.app/post/task', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -60,7 +58,7 @@ const TaskManager = () => {
             if (response.status === 409) {
                 alert('Task already exists!');
             } else if (response.status === 201) {
-                const data = await response.json(); // Extract task id
+                const data = await response.json();
                 return data.id;
             } else {
                 const errorData = await response.json();

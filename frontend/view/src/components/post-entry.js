@@ -9,7 +9,7 @@ const Entries = ({ task }) => {
 
     const postTask = async (newTask) => {
         try {
-            const response = await fetch('http://localhost:5000/post/task', {
+            const response = await fetch('https://backend-tau-ecru-85.vercel.app/post/task', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
