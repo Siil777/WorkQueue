@@ -24,32 +24,43 @@ const TaskManager = () => {
                 },
                 body: JSON.stringify({ task: newTask }),
             });
+    
             if (response.status === 409) {
                 alert('Task already exists!');
             } else if (response.status === 201) {
-                alert('Task has been added successfully');
-            } else if (!response.ok) {
+                const data = await response.json(); // Extract task id
+                return data.id;
+            } else {
                 const errorData = await response.json();
                 throw new Error(`Some error occurred: ${errorData.message}`);
             }
-            const data = await response.json();
-            setResponseData(data);
         } catch (e) {
             setError(e);
             console.error(e);
         }
     };
-
+    const getNextId = () => {
+        const lastId = parseInt(localStorage.getItem('lastId') || '0', 10);
+        const nextId = lastId + 1;
+        localStorage.setItem('lastId', nextId);
+        return nextId;
+    };
+    
     const addTask = (task) => {
+        // Generate a persistent unique ID
+        const newId = getNextId();
+    
         // Call the server-side function
         postTask(task);
-
+    
         // Update local state
         setTasks((prevTasks) => ({
             ...prevTasks,
-            do: [...prevTasks.do, { id: Date.now(), text: task }],
+            do: [...prevTasks.do, { id: newId, text: task }],
         }));
     };
+    
+    
 
     const handleDragStart = (e, task, area) => {
         e.dataTransfer.setData("taskId", task.id);
@@ -149,11 +160,12 @@ const TaskManager = () => {
                             backgroundColor: "#f4f4f4",
                             boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
                         }}
-                    >
-                        <h3>{area === "do" ? "Do" : area === "inProgress" ? "In Progress" : "Done"}</h3>
-                        {tasks[area].map((task) => (
+                    ><h3>{area === "do" ? "Do" : area === "inProgress" ? "In Progress" : "Done"}</h3>
+                    {tasks[area].map((task, index) => {
+                        console.log(index);
+                        return (
                             <div
-                                key={task.id}
+                                key={index}
                                 className="task"
                                 draggable
                                 onDragStart={(e) => handleDragStart(e, task, area)}
@@ -172,7 +184,9 @@ const TaskManager = () => {
                                     onTaskDeleted={handleDeleted}
                                 />
                             </div>
-                        ))}
+                        );
+                    })}
+                    
                     </div>
                 ))}
             </div>

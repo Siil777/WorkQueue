@@ -2,7 +2,7 @@ const { resolve } = require('path');
 
 const sqlite3 = require('sqlite3').verbose();
 
-const db = new sqlite3.Database('tasklist.db', (err) => {
+const db = new sqlite3.Database('works.db', (err) => {
     if (err) {
         throw new Error('Database error: ' + err.message);
     } else {

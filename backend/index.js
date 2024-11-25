@@ -31,7 +31,6 @@ app.use((req, res, next) => {
 app.post('/post/task', async (req, res) => {
     console.log('Request received at /post/task');
     console.log('Request body:', req.body);
-
     const { task } = req.body;
 
     try {
@@ -57,7 +56,8 @@ app.get('/get/task', async (req, res) => {
     }
 });
 app.delete('/delete/task/:taskId', async (req, res) => {
-    const { taskId } = req.params;  // Ensure you are extracting from req.params, not req.body
+    const { taskId } = req.params; 
+     // Ensure you are extracting from req.params, not req.body
     console.log("Received taskId:", taskId);  // Log taskId to debug
 
     // Continue with deletion logic
