@@ -14,7 +14,7 @@ const TaskManager = () => {
     useEffect(() => {
         const fetchTasks = async () => {
             try {
-                const response = await fetch('https://backend-tau-ecru-85.vercel.app/get/task');
+                const response = await fetch('https://underduty.onrender.com/get/task');
                 if (!response.ok) {
                     throw new Error(`Failed to fetch tasks: ${response.statusText}`);
                 }
@@ -47,7 +47,7 @@ const TaskManager = () => {
 
     const postTask = async (newTask) => {
         try {
-            const response = await fetch('https://backend-tau-ecru-85.vercel.app/post/task', {
+            const response = await fetch('https://underduty.onrender.com/post/task', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

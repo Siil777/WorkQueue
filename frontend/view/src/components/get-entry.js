@@ -7,7 +7,7 @@ const GetTasks = () => {
     const [error, setError] = useState(null);
     const fetchTasks = async () => {
         try {
-            const response = await fetch('https://backend-tau-ecru-85.vercel.app/get/task', {
+            const response = await fetch('https://underduty.onrender.com/get/task', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
