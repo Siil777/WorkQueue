@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react';
-import Forms from './drag-co.js';
+import { useState } from 'react';
 import GetTasks from './get-entry.js';
-const Entries = ({ task }) => {
-    const [responseData, setresponseData] = useState(null);
-    const [error, setError] = useState(null);
-    const [tasks, setTasks] = useState([]);
+import InputWithIcon from './imputs.js';
+import Buttons from './buttons.js';
 
+const Entries = () => {
+    const [tasks, setTasks] = useState([]);
+    const [input, setInput] = useState('');
 
     const postTask = async (newTask) => {
         try {
-            const response = await fetch('https://underduty.onrender.com/post/task', {
+            const response = await fetch('http://localhost:5000/post/task', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -26,11 +26,7 @@ const Entries = ({ task }) => {
                 }
             } else if (response.status === 201) {
                 const data = await response.json();
-                // Use the ID from the backend
-                setTasks((prevTasks) => ({
-                    ...prevTasks,
-                    do: [...prevTasks.do, { id: data.id, text: newTask }],
-                }));
+                setTasks((prevTasks) => [...prevTasks, { id: data.id, text: newTask }]);
                 alert('Task has been added successfully');
             }
         } catch (e) {
@@ -38,16 +34,26 @@ const Entries = ({ task }) => {
         }
     };
 
-    if (task) {
-        postTask();
-    }
-
     return (
         <div>
-            <Forms onTask={postTask} />
+            <div className="d-flex justify-content-center">
+                <div className="d-block">
+                    <InputWithIcon
+                        onChange={(e) => setInput(e.target.value)} 
+                    />
+                    <Buttons
+                        onClick={() => {
+                            console.log('Adding task:', input); 
+                            postTask(input);
+                        }}
+                    >
+                        Add
+                    </Buttons>
+                </div>
+            </div>
             <GetTasks />
         </div>
-    )
-}
+    );
+};
 
 export default Entries;

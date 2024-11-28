@@ -1,61 +1,113 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import DeleteMethod from './delete-entry';
+import React, { useState, useEffect } from "react";
 
-const GetTasks = () => {
+const TaskBoard = () => {
     const [tasks, setTasks] = useState([]);
     const [error, setError] = useState(null);
+
+    // Fetch tasks from the backend
     const fetchTasks = async () => {
         try {
-            const response = await fetch('https://underduty.onrender.com/get/task', {
+            const response = await fetch('http://localhost:5000/get/task', {
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json'
-                }
-
-            })
+                    'Content-Type': 'application/json',
+                },
+            });
             if (!response.ok) {
-                throw new Error(`can not get task`)
-            } else {
-                console.log('tasks')
+                throw new Error(`Cannot fetch tasks`);
             }
             const data = await response.json();
-            if (Array.isArray(data)) {
-                setTasks(data);
-            } else {
-                throw new Error('unexpected format' + JSON.stringify(data));
-            }
-            console.log('fetched data', data);
-
+            setTasks(data);
         } catch (e) {
-            setError(e.message)
+            setError(e.message);
             console.error(e);
         }
-    }
+    };
+
     useEffect(() => {
         fetchTasks();
     }, []);
 
-    // const handleDeleted = (deletedTaskID) => {
-    //     setTasks(tasks.filter(task => task.id !== deletedTaskID))
-    // }
+    // Handle drag-and-drop
+    const handleDragStart = (taskId) => {
+        // Store the ID of the task being dragged
+        localStorage.setItem('draggedTaskId', taskId);
+    };
+
+    const handleDrop = (newCategory) => {
+        const taskId = localStorage.getItem('draggedTaskId');
+        if (!taskId) return;
+
+        // Update the task's category
+        const updatedTasks = tasks.map((task) =>
+            task.id === parseInt(taskId) ? { ...task, category: newCategory } : task
+        );
+        setTasks(updatedTasks);
+
+        // Optionally, update the backend with the new category
+        fetch(`http://localhost:5000/update/task/${taskId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ category: newCategory }),
+        }).catch((e) => console.error('Failed to update task:', e));
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault(); // Allow dropping
+    };
+
+    // Render tasks by category
+    const renderTasks = (category) => {
+        return tasks
+            .filter((task) => task.category === category)
+            .map((task) => (
+                <div
+                    key={task.id}
+                    draggable
+                    onDragStart={() => handleDragStart(task.id)}
+                    style={{
+                        padding: "8px",
+                        margin: "4px 0",
+                        backgroundColor: "#f0f0f0",
+                        cursor: "grab",
+                    }}
+                >
+                    {task.task}
+                </div>
+            ));
+    };
 
     return (
-        <div>
-  {/*           {error && <p>Error: {error} </p>}
-            {tasks.length > 0 ? (
-                <ul>
-                    {tasks.map((task, index) => (
-                        <li key={task.id}>{task.task}
-                            
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p>Loading tasks...</p>
-            )} */}
-
+        <div style={{ display: "flex", justifyContent: "space-around", padding: "16px" }}>
+            {error && <p>Error: {error}</p>}
+            <div
+                onDragOver={handleDragOver}
+                onDrop={() => handleDrop("todo")}
+                style={{ width: "30%", padding: "16px", backgroundColor: "#e0e0e0" }}
+            >
+                <h3>To Do</h3>
+                {renderTasks("todo")}
+            </div>
+            <div
+                onDragOver={handleDragOver}
+                onDrop={() => handleDrop("in-progress")}
+                style={{ width: "30%", padding: "16px", backgroundColor: "#d0f0c0" }}
+            >
+                <h3>In Progress</h3>
+                {renderTasks("in-progress")}
+            </div>
+            <div
+                onDragOver={handleDragOver}
+                onDrop={() => handleDrop("done")}
+                style={{ width: "30%", padding: "16px", backgroundColor: "#c0d0f0" }}
+            >
+                <h3>Done</h3>
+                {renderTasks("done")}
+            </div>
         </div>
-    )
-}
-export default GetTasks;
+    );
+};
+
+export default TaskBoard;

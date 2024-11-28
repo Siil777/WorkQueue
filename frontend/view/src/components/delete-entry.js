@@ -1,16 +1,17 @@
 import React from "react";
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 const DeleteEntry = ({ taskId, onTaskDeleted }) => {
     const handleDelete = async () => {
         try {
-            console.log("Task ID being deleted:", taskId);  
+            console.log("Task ID being deleted:", taskId);
 
             if (!taskId) {
                 console.error("Invalid taskId");
                 return;
             }
 
-            const response = await fetch(`https://underduty.onrender.com/task/${taskId}`, {
+            const response = await fetch(`https://for-server-side.onrender.com/task/${taskId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -31,9 +32,17 @@ const DeleteEntry = ({ taskId, onTaskDeleted }) => {
     };
 
     return (
-        <button onClick={handleDelete} className="btn btn-outline-danger">
-            Delete
-        </button>
+        <div className="text-end">
+            <button
+                onClick={handleDelete}
+                className="btn btn-link p-0"
+                style={{ border: 'none', background: 'none', cursor: 'pointer' }}
+                aria-label="Delete"
+            >
+                <FontAwesomeIcon icon={faTrash} />
+            </button>
+        </div>
+
     );
 };
 export default DeleteEntry;
