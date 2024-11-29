@@ -3,21 +3,25 @@ import React, { useState, useEffect } from "react";
 const TaskBoard = () => {
     const [tasks, setTasks] = useState([]);
     const [error, setError] = useState(null);
+    const [draggedTask, setDraggedTask] = useState(null);
 
-    // Fetch tasks from the backend
     const fetchTasks = async () => {
         try {
-            const response = await fetch('http://localhost:5000/get/task', {
-                method: 'GET',
+            const response = await fetch("http://localhost:5000/get/task", {
+                method: "GET",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
             });
             if (!response.ok) {
-                throw new Error(`Cannot fetch tasks`);
+                throw new Error("Cannot fetch tasks");
             }
             const data = await response.json();
-            setTasks(data);
+            if (Array.isArray(data)) {
+                setTasks(data);
+            } else {
+                throw new Error("Unexpected response format");
+            }
         } catch (e) {
             setError(e.message);
             console.error(e);
@@ -28,39 +32,35 @@ const TaskBoard = () => {
         fetchTasks();
     }, []);
 
-    // Handle drag-and-drop
     const handleDragStart = (taskId) => {
-        // Store the ID of the task being dragged
-        localStorage.setItem('draggedTaskId', taskId);
+        setDraggedTask(taskId);
     };
 
     const handleDrop = (newCategory) => {
-        const taskId = localStorage.getItem('draggedTaskId');
-        if (!taskId) return;
+        if (!draggedTask) return;
 
-        // Update the task's category
         const updatedTasks = tasks.map((task) =>
-            task.id === parseInt(taskId) ? { ...task, category: newCategory } : task
+            task.id === draggedTask ? { ...task, category: newCategory } : task
         );
         setTasks(updatedTasks);
 
-        // Optionally, update the backend with the new category
-        fetch(`http://localhost:5000/update/task/${taskId}`, {
-            method: 'PUT',
+        // Update backend
+        fetch(`http://localhost:5000/update/task/${draggedTask}`, {
+            method: "PUT",
             headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
             },
             body: JSON.stringify({ category: newCategory }),
-        }).catch((e) => console.error('Failed to update task:', e));
+        }).catch((e) => console.error("Failed to update task:", e));
+        setDraggedTask(null); // Reset
     };
 
     const handleDragOver = (e) => {
-        e.preventDefault(); // Allow dropping
+        e.preventDefault();
     };
 
-    // Render tasks by category
-    const renderTasks = (category) => {
-        return tasks
+    const renderTasks = (category) =>
+        tasks
             .filter((task) => task.category === category)
             .map((task) => (
                 <div
@@ -77,7 +77,6 @@ const TaskBoard = () => {
                     {task.task}
                 </div>
             ));
-    };
 
     return (
         <div style={{ display: "flex", justifyContent: "space-around", padding: "16px" }}>

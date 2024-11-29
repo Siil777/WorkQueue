@@ -2,7 +2,7 @@ const { resolve } = require('path');
 
 const sqlite3 = require('sqlite3').verbose();
 
-const db = new sqlite3.Database('worksdbforrender.db', (err) => {
+const db = new sqlite3.Database('worksdbone.db', (err) => {
     if (err) {
         throw new Error('Database error: ' + err.message);
     } else {
@@ -17,6 +17,11 @@ const db = new sqlite3.Database('worksdbforrender.db', (err) => {
                 console.log('Table "tasks" is ready');
             }
         });
+        db.run(`ALTER TABLE tasks ADD COLUMN category TEXT DEFAULT 'todo'`,(alterErr)=>{
+            if(alterErr && alterErr.message.includes("duplicate columns name")){
+                console.log('category column already exist');
+            }
+        })
     }
 });
 
