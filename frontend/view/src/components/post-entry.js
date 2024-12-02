@@ -9,7 +9,7 @@ const Entries = () => {
 
     const postTask = async (newTask) => {
         try {
-            const response = await fetch('http://localhost:5000/post/task', {
+            const response = await fetch('https://for-server-side-2.onrender.com/post/task', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
