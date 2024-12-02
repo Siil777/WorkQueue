@@ -11,7 +11,7 @@ const DeleteEntry = ({ taskId, onTaskDeleted }) => {
                 return;
             }
 
-            const response = await fetch(`https://for-server-side.onrender.com/task/${taskId}`, {
+            const response = await fetch(`https://for-server-side-2.onrender.com/task/${taskId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
