@@ -7,7 +7,7 @@ const TaskBoard = () => {
 
     const fetchTasks = async () => {
         try {
-            const response = await fetch("http://localhost:5000/get/task", {
+            const response = await fetch("https://for-server-side-2.onrender.com/get/task", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
