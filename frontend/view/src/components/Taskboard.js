@@ -45,10 +45,10 @@ const TaskBoard = ({ tasks, setTasks }) => {
                     margin: "4px 0",
                     backgroundColor: "#f0f0f0",
                     cursor: "grab",
-                    color: "black"
+                    zIndex: "-1"
                 }}
             >
-                {task.text}
+                {task.task}
             </div>
         )) || <p>No tasks available</p>;
     };
