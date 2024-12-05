@@ -9,7 +9,7 @@ const App = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch('http://localhost:5000/get/task', {
+        const response = await fetch('https://for-server-side-2.onrender.com/get/task', {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
         });
@@ -24,15 +24,13 @@ const App = () => {
           inProgress: data.filter(task => task.category === 'inProgress'),
           done: data.filter(task => task.category === 'done'),
         };
-
-        // Save tasks to localStorage and update state
         localStorage.setItem('tasks', JSON.stringify(updatedTasks));
         setTasks(updatedTasks);
       } catch (error) {
         console.error(error);
         const savedTasks = localStorage.getItem('tasks');
         if (savedTasks) {
-          setTasks(JSON.parse(savedTasks)); // Use saved tasks from localStorage
+          setTasks(JSON.parse(savedTasks));
         }
       }
     };
@@ -40,17 +38,16 @@ const App = () => {
     fetchTasks();
   }, []);
 
-  // Function to post a new task
   const postTask = async (newTask) => {
     try {
-      const response = await fetch('http://localhost:5000/post/task', {
+      const response = await fetch('https://for-server-side-2.onrender.com/post/task', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ task: newTask, category: 'todo' }),
       });
 
       if (response.ok) {
-        const tasksResponse = await fetch('http://localhost:5000/get/task');
+        const tasksResponse = await fetch('https://for-server-side-2.onrender.com/get/task');
         const data = await tasksResponse.json();
         const updatedTasks = {
           do: data.filter(task => task.category === 'todo'),
