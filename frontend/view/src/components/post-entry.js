@@ -1,59 +1,44 @@
-import { useState } from 'react';
-import GetTasks from './get-entry.js';
-import InputWithIcon from './imputs.js';
-import Buttons from './buttons.js';
+//post-entry.js
+import React, { useState, useEffect } from 'react';
+import Entries from './get-entry.js';
+import TaskBoard from './Taskboard.js';
 
-const Entries = () => {
-    const [tasks, setTasks] = useState([]);
-    const [input, setInput] = useState('');
-
-    const postTask = async (newTask) => {
-        try {
-            const response = await fetch('https://for-server-side-2.onrender.com/post/task', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ task: newTask }),
-            });
-
-            if (!response.ok) {
-                if (response.status === 409) {
-                    alert('Task already exists!');
-                } else {
-                    const errorData = await response.json();
-                    throw new Error(`Error: ${errorData.message}`);
+const App = () => {
+    const [tasks, setTasks] = useState({ do: [], inProgress: [], done: [] });
+    useEffect(() => {
+        const fetchTasks = async (newTask) => {
+            try {
+                const response = await fetch('http://localhost:5000/get/task', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+                if (!response.ok) {
+                    throw new Error('Cannot fetch tasks');
                 }
-            } else if (response.status === 201) {
                 const data = await response.json();
-                setTasks((prevTasks) => [...prevTasks, { id: data.id, text: newTask }]);
-                alert('Task has been added successfully');
+                const updatedTasks = {
+                    ...tasks,
+                    do: [...(tasks.do || []), { id: data.id, text: newTask }],
+                }
+                setTasks(data);
+            } catch (error) {
+                console.error(error);
+                const savedTasks = localStorage.getItem('tasks');
+                if (savedTasks) {
+                    setTasks(JSON.parse(savedTasks));
+                }
             }
-        } catch (e) {
-            console.error(e);
-        }
-    };
+        };
+        fetchTasks();
+    }, []);
 
     return (
         <div>
-            <div className="d-flex justify-content-center">
-                <div className="d-block">
-                    <InputWithIcon
-                        onChange={(e) => setInput(e.target.value)} 
-                    />
-                    <Buttons
-                        onClick={() => {
-                            console.log('Adding task:', input); 
-                            postTask(input);
-                        }}
-                    >
-                        Add
-                    </Buttons>
-                </div>
-            </div>
-            <GetTasks />
+            <Entries tasks={tasks} setTasks={setTasks} />
+            <TaskBoard tasks={tasks} setTasks={setTasks} />
         </div>
     );
 };
 
-export default Entries;
+export default App;
+

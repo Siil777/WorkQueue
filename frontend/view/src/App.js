@@ -1,12 +1,13 @@
 import './App.css';
 import Entries from './components/post-entry.js';
 import Header from './components/header.js';
+import './scss/style.scss';
 function App() {
   return (
-    <div>
-      <Header />
-      <Entries />
-    </div>
+      <div className='className'>
+        <Header />
+        <Entries />
+      </div>
   )
 }
 

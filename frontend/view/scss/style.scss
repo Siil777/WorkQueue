@@ -1,0 +1,24 @@
+.body {
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    background-color: black;
+
+}
+.body::before {
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-image: url('../img/pixels.jpg');
+    background-size: cover;
+    background-position: center;
+}
+.className {
+    background-color: black;
+}
+.task-item {
+    font-size: 24px;
+    color: black;
+}
